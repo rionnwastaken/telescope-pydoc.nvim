@@ -86,6 +86,7 @@ for key in keywords:
 
 jason = json.dumps(data,indent=4)
 
+data_file.parent.mkdir(parents=True, exist_ok=True)
 with open(data_file,"w") as f:
     f.write(jason)
 

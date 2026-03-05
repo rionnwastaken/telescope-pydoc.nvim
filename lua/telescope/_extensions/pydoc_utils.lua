@@ -1,5 +1,10 @@
 local M = {}
 
+local pydoc
+local function setup(opts)
+	pydoc = opts
+end
+
 local actions = require("telescope.actions")
 local action_state = require("telescope.actions.state")
 local finders = require("telescope.finders")
@@ -67,26 +72,47 @@ local function show_pydoc_in_buffer(keyword)
 	vim.api.nvim_win_set_buf(0, b_id)
 	vim.schedule(function()
 		vim.cmd("set filetype=man")
-		vim.cmd(string.format("r !pydoc %s", keyword))
+		vim.cmd(string.format("r !%s %s", pydoc.command, keyword))
 		vim.api.nvim_win_set_cursor(0, { 1, 1 })
 	end)
 end
 
 --Creates json file with keywords only if file doesnt exist
-local createJson = function(opts)
+local createJson = function()
 	local overwrite = ""
 
-	if opts.overwrite_write == true then
+	if pydoc.overwrite_write == true then
 		overwrite = "-f"
 	end
 
-	local script = string.format("%s/%s", opts.root_folder, "python/createJson.py")
+	local script = pydoc.pydoc_lazy_path .. "/python/createJson.py"
+
+	if pydoc.local_root_folder ~= nil then
+		script = string.format("%s/%s", pydoc.local_root_folder, "python/createJson.py")
+	end
+
 	vim.system({ "python3", script, overwrite })
+end
+
+local merge_tables = function(table_origin, table2)
+	local merged_table = {}
+
+	for key, value in pairs(table_origin) do
+		merged_table[key] = value
+	end
+
+	for key, value in pairs(table2) do
+		merged_table[key] = value
+	end
+
+	return merged_table
 end
 
 M.read_file = read_file
 M.createJson = createJson
 M.show_picker = show_picker
 M.show_pydoc_in_buffer = show_pydoc_in_buffer
+M.merge_tables = merge_tables
+M.setup = setup
 
 return M

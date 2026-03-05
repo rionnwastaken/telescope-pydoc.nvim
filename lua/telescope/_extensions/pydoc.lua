@@ -1,20 +1,33 @@
-local py_u = require("telescope._extensions.pydoc_utils")
-local pydoc = {}
+local pydoc = {
+	command = "pydoc",
+	pydoc_lazy_path = string.format("%s/%s", vim.fn.stdpath("data"), "lazy/telescope-pydoc.nvim"),
+}
 
-local pydoc_opts
+local py_u = require("telescope._extensions.pydoc_utils")
 
 return require("telescope").register_extension({
 
+	---@param opts {command:boolean | nil,local_root_folder: string | nil}
 	setup = function(opts)
-		pydoc_opts = opts
-        py_u.createJson(opts)
+		pydoc = py_u.merge_tables(pydoc, opts)
+		py_u.setup(pydoc)
+		py_u.createJson()
 	end,
 
 	exports = {
 
 		createJson = py_u.createJson,
+
+		---@param opts {all:boolean | nil}
 		show_picker = function(opts)
-			local data_path = string.format("%s/%s", pydoc_opts.root_folder, "data/pydoc_keywords.json")
+			local data_path
+
+			local data_path =
+				string.format("%s/%s", vim.fn.stdpath("data"), "lazy/telescope-pydoc.nvim/data/pydoc_keywords.json")
+
+			if pydoc.local_root_folder ~= nil then
+				data_path = string.format("%s/%s", pydoc.local_root_folder, "data/pydoc_keywords.json")
+			end
 			local cont = py_u.read_file(data_path)
 
 			if cont == nil then
