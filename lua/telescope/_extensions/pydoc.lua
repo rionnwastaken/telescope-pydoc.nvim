@@ -7,7 +7,7 @@ local py_u = require("telescope._extensions.pydoc_utils")
 
 return require("telescope").register_extension({
 
-	---@param opts {command:boolean | nil,local_root_folder: string | nil}
+	---@param opts {command:string | nil,local_root_folder: string | nil}
 	setup = function(opts)
 		pydoc = py_u.merge_tables(pydoc, opts)
 		py_u.setup(pydoc)
@@ -20,8 +20,6 @@ return require("telescope").register_extension({
 
 		---@param opts {all:boolean | nil}
 		show_picker = function(opts)
-			local data_path
-
 			local data_path =
 				string.format("%s/%s", vim.fn.stdpath("data"), "lazy/telescope-pydoc.nvim/data/pydoc_keywords.json")
 

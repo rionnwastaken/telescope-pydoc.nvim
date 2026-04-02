@@ -72,7 +72,11 @@ local function show_pydoc_in_buffer(keyword)
 	vim.api.nvim_win_set_buf(0, b_id)
 	vim.schedule(function()
 		vim.cmd("set filetype=man")
-		vim.cmd(string.format("r !%s %s", pydoc.command, keyword))
+		vim.cmd("setlocal buftype=nofile")
+		vim.cmd("setlocal bufhidden=wipe")
+		vim.cmd("setlocal noswapfile")
+		local escaped = vim.fn.shellescape(keyword)
+		vim.cmd(string.format("r !%s %s", pydoc.command, escaped))
 		vim.api.nvim_win_set_cursor(0, { 1, 1 })
 	end)
 end
@@ -91,6 +95,8 @@ local createJson = function()
 		script = string.format("%s/%s", pydoc.local_root_folder, "python/createJson.py")
 	end
 
+
+    -- Script checks: file exists ? exit(0) : gather keywords
 	vim.system({ "python3", script, overwrite })
 end
 

@@ -2,12 +2,7 @@ import pydoc
 import sys
 import io
 import json
-import builtins
-import inspect
-import re
-import os
 from pathlib import Path
-from typing import List
 
 
 script_dir = Path(__file__).parent
@@ -18,7 +13,6 @@ opts['force_write'] = False
 
 
 if (len( sys.argv ) > 1):
-    
     if (sys.argv[1] == '-f'):
         opts['force_write'] = True
 
@@ -58,7 +52,7 @@ H = pydoc.Helper()
 
 
 
-v = [H.listkeywords,H.listmodules,H.listsymbols,H.listtopics]
+
 keywords = {
         "keywords": H.listkeywords,
         "modules": H.listmodules,
@@ -70,8 +64,6 @@ keywords = {
 
 data = {}
 
-# print( type(keywords['builtints']) )
-# exit(0)
             
 for key in keywords:
     if type(keywords[key]) == list:
